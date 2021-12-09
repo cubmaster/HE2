@@ -10,6 +10,7 @@ import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { HeEncryptComponent } from './he-encrypt/he-encrypt.component';
+import { CkksComponent } from './ckks/ckks.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { HeEncryptComponent } from './he-encrypt/he-encrypt.component';
     HomeComponent,
     CounterComponent,
     FetchDataComponent,
-    HeEncryptComponent
+    HeEncryptComponent,
+    CkksComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -26,6 +28,7 @@ import { HeEncryptComponent } from './he-encrypt/he-encrypt.component';
     FormsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
+      { path: 'ckks', component: CkksComponent },
       { path: 'encrypt', component: HeEncryptComponent },
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },

@@ -140,19 +140,22 @@ namespace HE2.ClientApp.Helpers
             return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
         }
 
-        public static SEALContext GetContext()
+        public static SEALContext GetContext(SchemeType schemetype  = SchemeType.BFV)
         {
             ulong mod = 8192;
-            var encryptionParameters = new EncryptionParameters(SchemeType.BFV)
+            var encryptionParameters = new EncryptionParameters(schemetype);
+            if (schemetype == SchemeType.BFV)
             {
-          
-                PolyModulusDegree = mod,
-                CoeffModulus = CoeffModulus.BFVDefault(mod),
-                
-                
-            };
-            
-            encryptionParameters.PlainModulus = new Modulus(758824777);
+                encryptionParameters.PolyModulusDegree = mod;
+                encryptionParameters.CoeffModulus = CoeffModulus.BFVDefault(mod);
+                encryptionParameters.PlainModulus = new Modulus(758824777);
+            } else if (schemetype == SchemeType.CKKS)
+            {
+                encryptionParameters.PolyModulusDegree = mod;
+                encryptionParameters.CoeffModulus = CoeffModulus.Create(
+                    encryptionParameters.PolyModulusDegree, new int[]{ 40, 40, 40, 40, 40 });
+            }
+        
             Debug.WriteLine("[COMMON]: Successfully created context");
 
             Console.WriteLine("Set encryption parameters and print");
@@ -218,6 +221,46 @@ namespace HE2.ClientApp.Helpers
             }
 
             Console.WriteLine("\\");
+        }
+        
+        public static void PrintVector<T>(
+            IEnumerable<T> vec, int printSize = 4, int prec = 3)
+        {
+            string numFormat = string.Format("{{0:N{0}}}", prec);
+            T[] veca = vec.ToArray();
+            int slotCount = veca.Length;
+            Console.WriteLine();
+            if (slotCount <= 2 * printSize)
+            {
+                Console.Write("    [");
+                for (int i = 0; i < slotCount; i++)
+                {
+                    Console.Write(" " + string.Format(numFormat, veca[i]));
+                    if (i != (slotCount - 1))
+                        Console.Write(",");
+                    else
+                        Console.Write(" ]");
+                }
+                Console.WriteLine();
+            }
+            else
+            {
+                Console.Write("    [");
+                for (int i = 0; i < printSize; i++)
+                {
+                    Console.Write(" "+ string.Format(numFormat, veca[i]) + ", ");
+                }
+                if (veca.Length > 2 * printSize)
+                {
+                    Console.Write(" ...");
+                }
+                for (int i = slotCount - printSize; i < slotCount; i++)
+                {
+                    Console.Write(", " + string.Format(numFormat, veca[i]));
+                }
+                Console.WriteLine(" ]");
+            }
+            Console.WriteLine();
         }
     }
 }
